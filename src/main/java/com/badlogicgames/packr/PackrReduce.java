@@ -216,6 +216,7 @@ class PackrReduce {
 				break;
 			case Linux32:
 			case Linux64:
+			case LinuxAarch64:
 				extensions.add(".dll");
 				extensions.add(".dll.git");
 				extensions.add(".dll.sha1");

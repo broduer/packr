@@ -146,6 +146,9 @@ public class Packr {
 			case Linux64:
 				exe = readResource("/packr-linux-x64");
 				break;
+			case LinuxAarch64:
+				exe = readResource("/packr-linux-aarch64");
+				break;
 			case MacOS:
 				exe = readResource("/packr-mac");
 				break;
