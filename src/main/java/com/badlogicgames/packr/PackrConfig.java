@@ -178,11 +178,7 @@ public class PackrConfig {
 			List<String> vmArgs = toStringArray(json.get("vmargs").asArray());
 			this.vmArgs = new ArrayList<>();
 			for (String vmArg : vmArgs) {
-				if (vmArg.startsWith("-")) {
-					this.vmArgs.add(vmArg.substring(1));
-				} else {
-					this.vmArgs.add(vmArg);
-				}
+				this.vmArgs.add(vmArg);
 			}
 		}
 		if (json.get("minimizejre") != null) {
