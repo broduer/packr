@@ -207,7 +207,22 @@ public class Packr {
 			}
 			builder.append("\n");
 		}
-		builder.append("  ]\n");
+		builder.append("  ],\n");
+
+		builder.append("  \"env\": {\n");
+		if (config.env != null) {
+			int i = 0;
+			for (Map.Entry<String, String> entry : config.env.entrySet()) {
+				String key = entry.getKey(), value = entry.getValue();
+				builder.append("    \"").append(key).append("\": \"").append(value).append("\"");
+				if (i++ < config.env.size() - 1) {
+					builder.append(",");
+				}
+				builder.append("\n");
+			}
+		}
+		builder.append("  }\n");
+
 		builder.append("}");
 
 		try (Writer writer = new FileWriter(new File(output.resourcesFolder, "config.json"))) {

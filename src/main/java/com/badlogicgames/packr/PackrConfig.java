@@ -17,6 +17,8 @@
 package com.badlogicgames.packr;
 
 import com.eclipsesource.json.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.zeroturnaround.zip.commons.FileUtils;
 
 import java.io.File;
@@ -72,6 +74,7 @@ public class PackrConfig {
 	public File platformLibsOutDir;
 	public File iconResource;
 	public String bundleIdentifier;
+	public Map<String, String> env;
 
 	public boolean verbose;
 
@@ -201,6 +204,13 @@ public class PackrConfig {
 		}
 		if (json.get("bundle") != null) {
 			bundleIdentifier = json.get("bundle").asString();
+		}
+		if (json.get("env") != null) {
+			JsonObject envObj = (JsonObject) json.get("env");
+			env = new HashMap<>();
+			for (JsonObject.Member m : envObj) {
+				env.put(m.getName(), m.getValue().asString());
+			}
 		}
 	}
 
