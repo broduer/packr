@@ -39,7 +39,6 @@ public class PackrConfig {
 	public enum Platform {
 		Windows32("windows32"),
 		Windows64("windows64"),
-		Linux32("linux32"),
 		Linux64("linux64"),
 		LinuxAarch64("linuxaarch64"),
 		MacOS("mac");

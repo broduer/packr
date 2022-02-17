@@ -214,7 +214,6 @@ class PackrReduce {
 				extensions.add(".so.sha1");
 				libExtension = ".dll";
 				break;
-			case Linux32:
 			case Linux64:
 			case LinuxAarch64:
 				extensions.add(".dll");
