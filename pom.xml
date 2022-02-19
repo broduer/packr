@@ -48,6 +48,8 @@
 	</repositories>
 
 	<build>
+		<finalName>packr</finalName>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
