@@ -86,7 +86,7 @@ public class Packr {
 
 	private PackrOutput buildMacBundle(PackrOutput output) throws IOException {
 
-		if (config.platform != PackrConfig.Platform.MacOS) {
+		if (config.platform != PackrConfig.Platform.MacOS64 && config.platform != PackrConfig.Platform.MacOSAarch64) {
 			return output;
 		}
 
@@ -146,8 +146,11 @@ public class Packr {
 			case LinuxAarch64:
 				exe = readResource("/packr-linux-aarch64");
 				break;
-			case MacOS:
-				exe = readResource("/packr-mac");
+			case MacOS64:
+				exe = readResource("/packr-mac-x64");
+				break;
+			case MacOSAarch64:
+				exe = readResource("/packr-mac-arm64");
 				break;
 		}
 

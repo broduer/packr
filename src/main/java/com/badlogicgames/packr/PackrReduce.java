@@ -224,7 +224,8 @@ class PackrReduce {
 				extensions.add(".dylib.sha1");
 				libExtension = ".so";
 				break;
-			case MacOS:
+			case MacOS64:
+			case MacOSAarch64:
 				extensions.add(".dll");
 				extensions.add(".dll.git");
 				extensions.add(".dll.sha1");

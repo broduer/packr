@@ -41,7 +41,8 @@ public class PackrConfig {
 		Windows64("windows64"),
 		Linux64("linux64"),
 		LinuxAarch64("linuxaarch64"),
-		MacOS("mac");
+		MacOS64("mac64"),
+		MacOSAarch64("macaarch64");
 
 		final String desc;
 
