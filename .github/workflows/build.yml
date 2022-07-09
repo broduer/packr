@@ -1,0 +1,75 @@
+on:
+  push:
+jobs:
+  windows:
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      shell: cmd
+      run: |
+        cd src/main/native/packr
+        call fips
+        call fips fetch
+        call build-windows-vs2022.bat
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows-x86
+        path: src\main\native\fips-deploy\packr\packr-win32-vs2022-release\packr.exe
+        retention-days: 1
+        if-no-files-found: error
+    - uses: actions/upload-artifact@v3
+      with:
+        name: windows-amd64
+        path: src\main\native\fips-deploy\packr\packr-win64-vs2022-release\packr.exe
+        retention-days: 1
+        if-no-files-found: error
+  macos:
+    runs-on: macos-11
+    steps:
+    - uses: actions/checkout@v3
+    - name: build
+      run: |
+        set -e -x
+        cd src/main/native/packr
+        ./fips
+        ./fips fetch
+        ./build-macos.sh
+    - uses: actions/upload-artifact@v3
+      with:
+        name: macos-amd64
+        path: src/main/native/fips-deploy/packr/packr-osx-x64-xcode-release/packr
+        retention-days: 1
+        if-no-files-found: error
+    - uses: actions/upload-artifact@v3
+      with:
+        name: macos-aarch64
+        path: src/main/native/fips-deploy/packr/packr-osx-arm64-xcode-release/packr
+        retention-days: 1
+        if-no-files-found: error
+  linux:
+    runs-on: ubuntu-20.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: build natives
+      run: |
+        set -e -x
+        cd src/main/native/packr
+        ./fips
+        ./fips fetch
+        ./build-linux.sh
+    - name: build jar
+      run: |
+        mvn clean package
+    - uses: actions/upload-artifact@v3
+      with:
+        name: linux-x64
+        path: src/main/native/fips-deploy/packr/linux-make-release/packr
+        retention-days: 1
+        if-no-files-found: error
+    - uses: actions/upload-artifact@v3
+      with:
+        name: jar
+        path: target/packr-jar-with-dependencies.jar
+        retention-days: 1
+        if-no-files-found: error
