@@ -14,14 +14,10 @@ jobs:
         call build-windows-vs2022.bat
     - uses: actions/upload-artifact@v3
       with:
-        name: windows-x86
-        path: src\main\native\fips-deploy\packr\packr-win32-vs2022-release\packr.exe
-        retention-days: 1
-        if-no-files-found: error
-    - uses: actions/upload-artifact@v3
-      with:
-        name: windows-amd64
-        path: src\main\native\fips-deploy\packr\packr-win64-vs2022-release\packr.exe
+        name: windows
+        path: |
+          src\main\native\fips-deploy\packr\packr-win32-vs2022-release\packr.exe
+          src\main\native\fips-deploy\packr\packr-win64-vs2022-release\packr.exe
         retention-days: 1
         if-no-files-found: error
   macos:
@@ -37,20 +33,21 @@ jobs:
         ./build-macos.sh
     - uses: actions/upload-artifact@v3
       with:
-        name: macos-amd64
-        path: src/main/native/fips-deploy/packr/packr-osx-x64-xcode-release/packr
-        retention-days: 1
-        if-no-files-found: error
-    - uses: actions/upload-artifact@v3
-      with:
-        name: macos-aarch64
-        path: src/main/native/fips-deploy/packr/packr-osx-arm64-xcode-release/packr
+        name: macos
+        path: |
+          src/main/native/fips-deploy/packr/packr-osx-x64-xcode-release/packr
+          src/main/native/fips-deploy/packr/packr-osx-arm64-xcode-release/packr
         retention-days: 1
         if-no-files-found: error
   linux:
+    needs: [macos, windows]
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+    - uses: actions/download-artifact@v3
+      with:
+        path: artifacts
+    - run: sudo apt install -y gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
     - name: build natives
       run: |
         set -e -x
@@ -58,13 +55,21 @@ jobs:
         ./fips
         ./fips fetch
         ./build-linux.sh
+        ./build-linux-aarch64.sh
     - name: build jar
       run: |
+        set -e
+        cp artifacts/windows/packr-win32-vs2022-release/packr.exe src/main/resources/packr-windows.exe
+        cp artifacts/windows/packr-win64-vs2022-release/packr.exe src/main/resources/packr-windows-x64.exe
+        cp artifacts/macos/packr-osx-x64-xcode-release/packr src/main/resources/packr-mac-x64
+        cp artifacts/macos/packr-osx-arm64-xcode-release/packr src/main/resources/packr-mac-arm64
         mvn clean package
     - uses: actions/upload-artifact@v3
       with:
-        name: linux-x64
-        path: src/main/native/fips-deploy/packr/linux-make-release/packr
+        name: linux
+        path: |
+          src/main/native/fips-deploy/packr/linux-make-release/packr
+          src/main/native/fips-deploy/packr/packr-linux-aarch64-make-release/packr
         retention-days: 1
         if-no-files-found: error
     - uses: actions/upload-artifact@v3
