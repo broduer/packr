@@ -1,0 +1,6 @@
+[submodule "src/main/native/packr/dropt"]
+	path = src/main/native/packr/dropt
+	url = git@github.com:jamesderlin/dropt
+[submodule "src/main/native/packr/sajson"]
+	path = src/main/native/packr/sajson
+	url = git@github.com:chadaustin/sajson

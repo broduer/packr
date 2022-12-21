@@ -5,45 +5,51 @@ jobs:
     runs-on: windows-2022
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - name: build
       shell: cmd
       run: |
         cd src/main/native/packr
-        call fips
-        call fips fetch
-        call build-windows-vs2022.bat
+        cmake -G "Visual Studio 17 2022" -B build .
+        cmake --build build --config Release
+        cmake -A Win32 -G "Visual Studio 17 2022" -B build32 .
+        cmake --build build32 --config Release
     - uses: actions/upload-artifact@v3
       with:
         name: windows
         path: |
-          src\main\native\fips-deploy\packr\packr-win32-vs2022-release\packr.exe
-          src\main\native\fips-deploy\packr\packr-win64-vs2022-release\packr.exe
-        retention-days: 1
+          src\main\native\packr\build\src\Release\packr.exe
+          src\main\native\packr\build32\src\Release\packr.exe
         if-no-files-found: error
   macos:
     runs-on: macos-11
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - name: build
       run: |
         set -e -x
         cd src/main/native/packr
-        ./fips
-        ./fips fetch
-        ./build-macos.sh
+        cmake -B build .
+        cmake --build build --config Release
+        cmake -DCMAKE_OSX_ARCHITECTURES=arm64 -B build-arm64 .
+        cmake --build build-arm64 --config Release
     - uses: actions/upload-artifact@v3
       with:
         name: macos
         path: |
-          src/main/native/fips-deploy/packr/packr-osx-x64-xcode-release/packr
-          src/main/native/fips-deploy/packr/packr-osx-arm64-xcode-release/packr
-        retention-days: 1
+          src/main/native/packr/build/src/packr
+          src/main/native/packr/build-arm64/src/packr
         if-no-files-found: error
   linux:
     needs: [macos, windows]
     runs-on: ubuntu-20.04
     steps:
     - uses: actions/checkout@v3
+      with:
+        submodules: 'true'
     - uses: actions/download-artifact@v3
       with:
         path: artifacts
@@ -52,29 +58,29 @@ jobs:
       run: |
         set -e -x
         cd src/main/native/packr
-        ./fips
-        ./fips fetch
-        ./build-linux.sh
-        ./build-linux-aarch64.sh
+        cmake -B build .
+        cmake --build build --config Release
+        cmake -DCMAKE_TOOLCHAIN_FILE=arm64-linux-gcc.cmake -B build-arm64 .
+        cmake --build build-arm64 --config Release
     - name: build jar
       run: |
         set -e
-        cp artifacts/windows/packr-win32-vs2022-release/packr.exe src/main/resources/packr-windows.exe
-        cp artifacts/windows/packr-win64-vs2022-release/packr.exe src/main/resources/packr-windows-x64.exe
-        cp artifacts/macos/packr-osx-x64-xcode-release/packr src/main/resources/packr-mac-x64
-        cp artifacts/macos/packr-osx-arm64-xcode-release/packr src/main/resources/packr-mac-arm64
+        cp artifacts/windows/build/src/Release/packr.exe src/main/resources/packr-windows.exe
+        cp artifacts/windows/build32/src/Release/packr.exe src/main/resources/packr-windows-x64.exe
+        cp artifacts/macos/build/src/packr src/main/resources/packr-mac-x64
+        cp artifacts/macos/build-arm64/src/packr src/main/resources/packr-mac-arm64
+        cp src/main/native/packr/build/src/packr src/main/resources/packr-linux-x64
+        cp src/main/native/packr/build-arm64/src/packr src/main/resources/packr-linux-aarch64
         mvn clean package
     - uses: actions/upload-artifact@v3
       with:
         name: linux
         path: |
-          src/main/native/fips-deploy/packr/linux-make-release/packr
-          src/main/native/fips-deploy/packr/packr-linux-aarch64-make-release/packr
-        retention-days: 1
+          src/main/native/packr/build/src/packr
+          src/main/native/packr/build-arm64/src/packr
         if-no-files-found: error
     - uses: actions/upload-artifact@v3
       with:
         name: jar
         path: target/packr-jar-with-dependencies.jar
-        retention-days: 1
         if-no-files-found: error
