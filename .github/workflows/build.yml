@@ -65,8 +65,8 @@ jobs:
     - name: build jar
       run: |
         set -e
-        cp artifacts/windows/build/src/Release/packr.exe src/main/resources/packr-windows.exe
-        cp artifacts/windows/build32/src/Release/packr.exe src/main/resources/packr-windows-x64.exe
+        cp artifacts/windows/build/src/Release/packr.exe src/main/resources/packr-windows-x64.exe
+        cp artifacts/windows/build32/src/Release/packr.exe src/main/resources/packr-windows.exe
         cp artifacts/macos/build/src/packr src/main/resources/packr-mac-x64
         cp artifacts/macos/build-arm64/src/packr src/main/resources/packr-mac-arm64
         cp src/main/native/packr/build/src/packr src/main/resources/packr-linux-x64
