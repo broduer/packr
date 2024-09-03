@@ -50,7 +50,7 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: 'true'
-    - uses: actions/download-artifact@v3
+    - uses: actions/download-artifact@v4.1.7
       with:
         path: artifacts
     - run: sudo apt install -y gcc-9-aarch64-linux-gnu g++-9-aarch64-linux-gnu
